@@ -5,10 +5,11 @@ import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
 images = []
+m_lst = []
 
 def load_imgs():
 	for i in range(12):
-		img = cv2.imread(f"averaged/v{i+1}.jpg")
+		img = cv2.imread(f"averaged/v{i+1}_averaged.png")
 		rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 		rgb = rgb.transpose(2,0,1).reshape(3,-1)
 		images.append(rgb)
@@ -81,8 +82,10 @@ def fit_linear_line():
 		ax.legend(loc='upper left')
 		plt.savefig(f"plots_linear_fit/v{i}_v{i + 1}.png")
 		plt.cla()
+		m_lst.append((mr, mg, mb))
 
 load_imgs()
+plot()
 fit_linear_line()
 
 
