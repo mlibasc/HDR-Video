@@ -1,7 +1,8 @@
-import cv2
 import os
-import numpy as np
+
+import cv2
 import matplotlib.pyplot as plt
+import numpy as np
 from scipy.optimize import curve_fit
 
 images = []
@@ -22,7 +23,6 @@ def response_func1(q, s, a, c):
 def response_func2(q, a, b, g):
     return a + b * q ** g
 
-
 # Make the scatter plot
 def plot():
     if not os.path.exists('plots'):
@@ -40,17 +40,22 @@ def plot():
 
 # Fit the response function into the plot
 def fit_response_func():
-    if not os.path.exists('plots_fit_func'):
-        os.mkdir('plots_fit_func')
-    for i in range(11):
+
+    if not os.path.exists('plots_fit'):
+        os.mkdir('plots_fit')
+    for i in range(10, 11):
         fig, ax = plt.subplots()
-        ax.scatter(images[i][0], images[i + 1][0], color='r', alpha=0.3, edgecolors='none', label='r channel', s=8)
-        ax.scatter(images[i][1], images[i + 1][1], color='g', alpha=0.3, edgecolors='none', label='g channel', s=8)
-        ax.scatter(images[i][2], images[i + 1][2], color='b', alpha=0.3, edgecolors='none', label='b channel', s=8)
+        ax.scatter(images[i][0], images[i + 1][0], color='r', alpha=0.3, edgecolors='none',
+                   label='r channel', s=8)
+        ax.scatter(images[i][1], images[i + 1][1], color='g', alpha=0.3, edgecolors='none',
+                   label='g channel', s=8)
+        ax.scatter(images[i][2], images[i + 1][2], color='b', alpha=0.3, edgecolors='none',
+                   label='b channel', s=8)
 
         # plot line of fit for r
         x = images[i][0]
         y = images[i + 1][0]
+
         popt, pcov = curve_fit(response_func2, x, y)
         plt.plot(x, response_func2(x, *popt), 'r-',
                  label='fit: a=%5.3f, b=%5.3f, g=%5.3f' % tuple(popt))
@@ -73,6 +78,7 @@ def fit_response_func():
 
 
 def fit_linear_line():
+
     if not os.path.exists('plots_fit_linear'):
         os.mkdir('plots_fit_linear')
     for i in range(11):
@@ -92,7 +98,32 @@ def fit_linear_line():
         m_lst.append((mr, mg, mb))
 
 
+def rgb_comparagram():
+    if not os.path.exists('comparagrams'):
+        os.mkdir('comparagrams')
+    for img_index in range(11):
+        r1_component = images[img_index][0]
+        g1_component = images[img_index][1]
+        b1_component = images[img_index][2]
+
+        r2_component = images[img_index+1][0]
+        g2_component = images[img_index+1][1]
+        b2_component = images[img_index+1][2]
+
+        base_image = np.zeros([256, 256, 3])
+        for r1, g1, b1, r2, g2, b2 in zip(r1_component, g1_component, b1_component, r2_component,g2_component
+                                          , b2_component):
+            # Image is BGR format.
+            base_image[b1, b2, 0] += 1
+            base_image[g1, g2, 1] += 1
+            base_image[r1, r2, 2] += 1
+
+        masked_array = np.ma.masked_greater(base_image, 255)
+        base_image[masked_array.mask] = 255
+        base_image = base_image.astype(np.uint8)
+
+        cv2.imwrite(f"comparagrams/color_img_{img_index:02d}_{img_index+1:02d}.jpg", base_image)
+
+
 load_imgs()
-# plot()
-fit_response_func()
-# fit_linear_line()
+rgb_comparagram()
