@@ -152,29 +152,32 @@ def plot_k2(threshold):
         for row in range(256):
             if img[col][row][0] >= threshold:
                 ax.scatter(row, col, color='r', alpha=0.3, edgecolors='none', s=8)
-                if not [col,row] in dots:
-                    dots.append([col,row])
+                if not [col, row] in dots:
+                    dots.append([col, row])
 
             if img[col][row][1] >= threshold:
                 ax.scatter(row, col, color='g', alpha=0.3, edgecolors='none', s=8)
-                if not [col,row] in dots:
-                    dots.append([col,row])
+                if not [col, row] in dots:
+                    dots.append([col, row])
 
             if img[col][row][2] >= threshold:
                 ax.scatter(row, col, color='b', alpha=0.3, edgecolors='none', s=8)
-                if not [col,row] in dots:
-                    dots.append([col,row])
+                if not [col, row] in dots:
+                    dots.append([col, row])
 
     dots = np.asarray(dots)
     print(dots.shape)
     print(dots)
-    x = dots[:,1]
-    y = dots[:,0]
+    x = dots[:, 1]
+    y = dots[:, 0]
     popt, pcov = curve_fit(comparametric_equation, x, y)
     plt.plot(x, comparametric_equation(x, *popt), 'k-',
-              label='fit: g=%5.3f' % tuple(popt))
+             label='fit: g=%5.3f' % tuple(popt))
+    plt.xlim([0, 255])
+    plt.ylim([0, 255])
     ax.legend(loc='lower left')
     plt.show()
+
 
 def full_composite_comparagram():
     comparator = 3
@@ -201,4 +204,4 @@ def full_composite_comparagram():
 
 
 # full_composite_comparagram()
-plot_k2(150)
+plot_k2(100)
