@@ -105,6 +105,7 @@ def fit_linear_line():
 
 
 def rgb_comparagram():
+    load_imgs()
     if not os.path.exists('comparagrams'):
         os.mkdir('comparagrams')
     for img_index in range(11):
@@ -141,7 +142,7 @@ def composite_comparagrams():
     for img_index in range(10):
         r1_component = images[img_index][:, :, 0]
         g1_component = images[img_index][:, :, 1]
-        b1_component = images[img_index][:, :, 1]
+        b1_component = images[img_index][:, :, 2]
 
         r2_component = images[img_index + 1][:, :, 0]
         g2_component = images[img_index + 1][:, :, 1]
@@ -158,5 +159,5 @@ def composite_comparagrams():
         cv2.imwrite(f"comparagrams/color_img_{img_index:02d}_{img_index + 1:02d}.jpg", base_image)
 
 
-composite_comparagrams()
+rgb_comparagram()
 # rgb_comparagram()
