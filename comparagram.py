@@ -134,6 +134,42 @@ def rgb_comparagram():
                     base_image)
 
 
+def plot_k2(threshold):
+    img = cv2.imread(f"comparagrams/k_2_composite_comparagram.jpg")
+    img = cv2.flip(img, 0)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+    if not os.path.exists('plots_k2'):
+        os.mkdir('plots_k2')
+
+    fig, ax = plt.subplots()
+    for col in range(256):
+        for row in range(256):
+            if img[col][row][0] >= threshold:
+                ax.scatter(row, col, color='r', alpha=0.3, edgecolors='none',
+                           label='r channel', s=8)
+            if img[col][row][1] >= threshold:
+                ax.scatter(row, col, color='g', alpha=0.3, edgecolors='none',
+                           label='r channel', s=8)
+            if img[col][row][2] >= threshold:
+                ax.scatter(row, col, color='b', alpha=0.3, edgecolors='none',
+                           label='r channel', s=8)
+    plt.show()
+
+
+
+    # ax.scatter(img[0], images[i + 1][0], color='r', alpha=0.3, edgecolors='none',
+    #            label='r channel', s=8)
+    # ax.scatter(images[i][1], images[i + 1][1], color='g', alpha=0.3, edgecolors='none',
+    #            label='g channel', s=8)
+    # ax.scatter(images[i][2], images[i + 1][2], color='b', alpha=0.3, edgecolors='none',
+    #            label='b channel', s=8)
+    # ax.legend(loc='lower left')
+    # plt.savefig(f"plots/v{i}_v{i + 1}.png")
+    # plt.cla()
+
+
+
 def full_composite_comparagram():
     comparator = 3
     pass_name = "third_pass"
@@ -158,4 +194,5 @@ def full_composite_comparagram():
     cv2.imwrite(f"comparagrams/color_img_{pass_name}.jpg", base_image)
 
 
-full_composite_comparagram()
+# full_composite_comparagram()
+plot_k2(150)
