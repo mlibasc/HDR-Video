@@ -108,56 +108,54 @@ def rgb_comparagram():
     load_imgs()
     if not os.path.exists('comparagrams'):
         os.mkdir('comparagrams')
-    for img_index in range(11):
+    comparator = 3
+    for img_index in range(12 - comparator):
         r1_component = images[img_index][0]
         g1_component = images[img_index][1]
         b1_component = images[img_index][2]
 
-        r2_component = images[img_index + 1][0]
-        g2_component = images[img_index + 1][1]
-        b2_component = images[img_index + 1][2]
+        r2_component = images[img_index + comparator][0]
+        g2_component = images[img_index + comparator][1]
+        b2_component = images[img_index + comparator][2]
 
         base_image = np.zeros([256, 256, 3])
         for r1, g1, b1, r2, g2, b2 in zip(r1_component, g1_component, b1_component, r2_component,
-                                          g2_component
-            , b2_component):
+                                          g2_component, b2_component):
             # Image is BGR format.
-            base_image[b1, b2, 0] += 1
-            base_image[g1, g2, 1] += 1
-            base_image[r1, r2, 2] += 1
+            base_image[b2, b1, 0] += 1
+            base_image[g2, g1, 1] += 1
+            base_image[r2, r1, 2] += 1
 
         masked_array = np.ma.masked_greater(base_image, 255)
         base_image[masked_array.mask] = 255
         base_image = base_image.astype(np.uint8)
         base_image = cv2.flip(base_image, 0)
-        cv2.imwrite(f"comparagrams/color_img_{img_index:02d}_{img_index + 1:02d}.jpg", base_image)
+        cv2.imwrite(f"comparagrams/color_img_{img_index:02d}_{img_index + comparator:02d}.jpg",
+                    base_image)
 
 
-def composite_comparagrams():
-    for i in range(11):
-        img = cv2.imread(f"comparagrams/first_pass/color_img_{i:02d}_{i + 1:02d}.jpg")
+def full_composite_comparagram():
+    comparator = 3
+    pass_name = "third_pass"
+    for i in range(12 - comparator):
+        img = cv2.imread(f"comparagrams/{pass_name}/color_img_{i:02d}_{i + comparator:02d}.jpg")
         rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         images.append(rgb)
 
-    for img_index in range(10):
+    base_image = np.zeros([256, 256, 3])
+    for img_index in range(12 - comparator):
         r1_component = images[img_index][:, :, 0]
         g1_component = images[img_index][:, :, 1]
         b1_component = images[img_index][:, :, 2]
 
-        r2_component = images[img_index + 1][:, :, 0]
-        g2_component = images[img_index + 1][:, :, 1]
-        b2_component = images[img_index + 1][:, :, 2]
+        base_image[:, :, 0] += b1_component
+        base_image[:, :, 1] += g1_component
+        base_image[:, :, 2] += r1_component
 
-        base_image = np.zeros([256, 256, 3])
-        base_image[:, :, 0] = np.add(b1_component, b2_component)
-        base_image[:, :, 1] = np.add(g1_component, g2_component)
-        base_image[:, :, 2] = np.add(r1_component, r2_component)
-
-        masked_array = np.ma.masked_greater(base_image, 255)
-        base_image[masked_array.mask] = 255
-        base_image = base_image.astype(np.uint8)
-        cv2.imwrite(f"comparagrams/color_img_{img_index:02d}_{img_index + 1:02d}.jpg", base_image)
+    masked_array = np.ma.masked_greater(base_image, 255)
+    base_image[masked_array.mask] = 255
+    base_image = base_image.astype(np.uint8)
+    cv2.imwrite(f"comparagrams/color_img_{pass_name}.jpg", base_image)
 
 
-rgb_comparagram()
-# rgb_comparagram()
+full_composite_comparagram()
