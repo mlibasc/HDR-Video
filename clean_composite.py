@@ -5,8 +5,6 @@ import math
 numImages = 12
 width = 1920
 height = 1080
-#width = 500
-#height = 281
 gamma = 0.69
 widthtrap = 256/4
 k = 2
@@ -47,10 +45,10 @@ def compute_hdr(data):
     divisor = 0
     for i in range(len(data)):
         total += np.multiply(certainty[data[i]], np.power(data[i], np.divide(1,gamma)))
-        divisor += certainty[data[i]] 
+        divisor += certainty[data[i]]
 
     return np.power(np.divide(total, divisor), gamma)
-    
+
 
 for i in range(numImages):
     imageNames.append("v" + str(i+1) + "_averaged.png")
@@ -65,7 +63,7 @@ newimage = np.array(newimage)
 for i in range(height):
     for j in range(width):
         for k in range(3):
-            
+
             # get list of pixels
             pix = []
             for n in range(numImages):
