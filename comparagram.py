@@ -121,9 +121,36 @@ def rgb_comparagram():
         masked_array = np.ma.masked_greater(base_image, 255)
         base_image[masked_array.mask] = 255
         base_image = base_image.astype(np.uint8)
-
+        base_image = cv2.flip(base_image, 0)
         cv2.imwrite(f"comparagrams/color_img_{img_index:02d}_{img_index+1:02d}.jpg", base_image)
 
 
-load_imgs()
-rgb_comparagram()
+def composite_comparagrams():
+    for i in range(11):
+        img = cv2.imread(f"comparagrams/first_pass/color_img_{i:02d}_{i + 1:02d}.jpg")
+        rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        rgb = rgb.transpose(2, 0, 1).reshape(3, -1)
+        print(rgb.shape)
+        images.append(rgb)
+    for img_index in range(10):
+        r1_component = images[img_index][0]
+        g1_component = images[img_index][1]
+        b1_component = images[img_index][2]
+
+        r2_component = images[img_index + 1][0]
+        g2_component = images[img_index + 1][1]
+        b2_component = images[img_index + 1][2]
+        print(b2_component.shape)
+        base_image = np.zeros([256, 256, 3])
+        base_image[:, :, 0] = np.add(b1_component, b2_component)
+        base_image[:, :, 1] = np.add(g1_component, g2_component)
+        base_image[:, :, 2] = np.add(r1_component, r2_component)
+
+        masked_array = np.ma.masked_greater(base_image, 255)
+        base_image[masked_array.mask] = 255
+        base_image = base_image.astype(np.uint8)
+        cv2.imwrite(f"comparagrams/color_img_{img_index:02d}_{img_index + 1:02d}.jpg", base_image)
+
+
+composite_comparagrams()
+# rgb_comparagram()
