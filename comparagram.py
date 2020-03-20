@@ -121,6 +121,7 @@ def rgb_comparagram():
         masked_array = np.ma.masked_greater(base_image, 255)
         base_image[masked_array.mask] = 255
         base_image = base_image.astype(np.uint8)
+        base_image = cv2.flip(base_image, 0)
 
         cv2.imwrite(f"comparagrams/color_img_{img_index:02d}_{img_index+1:02d}.jpg", base_image)
 
