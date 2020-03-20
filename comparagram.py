@@ -25,6 +25,10 @@ def response_func2(q, a, b, g):
     return a + b * q ** g
 
 
+def comparametric_equation(q, g):
+    return q * 2 ** g
+
+
 # Make the scatter plot
 def plot():
     if not os.path.exists('plots'):
@@ -142,33 +146,35 @@ def plot_k2(threshold):
     if not os.path.exists('plots_k2'):
         os.mkdir('plots_k2')
 
+    dots = []
     fig, ax = plt.subplots()
     for col in range(256):
         for row in range(256):
             if img[col][row][0] >= threshold:
-                ax.scatter(row, col, color='r', alpha=0.3, edgecolors='none',
-                           label='r channel', s=8)
+                ax.scatter(row, col, color='r', alpha=0.3, edgecolors='none', s=8)
+                if not [col,row] in dots:
+                    dots.append([col,row])
+
             if img[col][row][1] >= threshold:
-                ax.scatter(row, col, color='g', alpha=0.3, edgecolors='none',
-                           label='r channel', s=8)
+                ax.scatter(row, col, color='g', alpha=0.3, edgecolors='none', s=8)
+                if not [col,row] in dots:
+                    dots.append([col,row])
+
             if img[col][row][2] >= threshold:
-                ax.scatter(row, col, color='b', alpha=0.3, edgecolors='none',
-                           label='r channel', s=8)
+                ax.scatter(row, col, color='b', alpha=0.3, edgecolors='none', s=8)
+                if not [col,row] in dots:
+                    dots.append([col,row])
+
+    dots = np.asarray(dots)
+    print(dots.shape)
+    print(dots)
+    x = dots[:,1]
+    y = dots[:,0]
+    popt, pcov = curve_fit(comparametric_equation, x, y)
+    plt.plot(x, comparametric_equation(x, *popt), 'k-',
+              label='fit: g=%5.3f' % tuple(popt))
+    ax.legend(loc='lower left')
     plt.show()
-
-
-
-    # ax.scatter(img[0], images[i + 1][0], color='r', alpha=0.3, edgecolors='none',
-    #            label='r channel', s=8)
-    # ax.scatter(images[i][1], images[i + 1][1], color='g', alpha=0.3, edgecolors='none',
-    #            label='g channel', s=8)
-    # ax.scatter(images[i][2], images[i + 1][2], color='b', alpha=0.3, edgecolors='none',
-    #            label='b channel', s=8)
-    # ax.legend(loc='lower left')
-    # plt.savefig(f"plots/v{i}_v{i + 1}.png")
-    # plt.cla()
-
-
 
 def full_composite_comparagram():
     comparator = 3
